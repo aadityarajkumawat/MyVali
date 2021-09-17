@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+    <body>
+        <main class="otp-container">
+            <div class="head-images">
+                <img src="https://i.ibb.co/9nd4fsw/discord.png" alt="" />
+                <span class="seperator"></span>
+                <img src="https://i.ibb.co/XsT6m9M/jklu.png" alt="" />
+            </div>
+            <h3>
+                An OTP has been sent to your E-Mail, enter that below to get
+                respective role
+            </h3>
+
+            <form action="#" method="POST" class="otp-form" id="otp-form">
+                <div class="d-flex">
+                    <input
+                        class="inp"
+                        type="number"
+                        name="num1"
+                        inputmode="numeric"
+                        maxlength="1"
+                        oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                    />
+
+                    <input
+                        class="inp"
+                        type="number"
+                        name="num2"
+                        inputmode="numeric"
+                        maxlength="1"
+                        oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                    />
+
+                    <input
+                        class="inp"
+                        type="number"
+                        name="num3"
+                        inputmode="numeric"
+                        maxlength="1"
+                        oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                    />
+
+                    <input
+                        class="inp"
+                        type="number"
+                        name="num4"
+                        inputmode="numeric"
+                        maxlength="1"
+                        oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                    />
+
+                    <input
+                        class="inp"
+                        type="number"
+                        name="num5"
+                        inputmode="numeric"
+                        maxlength="1"
+                        oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                    />
+
+                    <input
+                        class="inp"
+                        type="number"
+                        name="num6"
+                        inputmode="numeric"
+                        maxlength="1"
+                        oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                    />
+                </div>
+
+                <input type="submit" value="Verify OTP" />
+            </form>
+        </main>
+    </body>
+
+    <script>
+        if (document) {
+            document
+                .getElementById('otp-form')
+                .setAttribute('action', '<%-path%>')
+
+            const inputs = document.querySelectorAll('#otp-form .inp')
+            inputs.length = inputs.length - 1
+            for (let i = 0; i < inputs.length; i++) {
+                inputs[i].addEventListener('keydown', function (event) {
+                    if (event.key === 'Backspace') {
+                        inputs[i].value = ''
+                        if (i !== 0) inputs[i - 1].focus()
+                    } else {
+                        if (i === inputs.length - 1 && inputs[i].value !== '') {
+                            return true
+                        } else if (event.keyCode > 47 && event.keyCode < 58) {
+                            inputs[i].value = event.key
+                            if (i !== inputs.length - 1) inputs[i + 1].focus()
+                            event.preventDefault()
+                        }
+                    }
+                })
+            }
+        }
+    </script>
+</html>

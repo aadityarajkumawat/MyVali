@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+    <body>
+        <main>
+            <div class="head-images">
+                <img src="https://i.ibb.co/9nd4fsw/discord.png" alt="" />
+                <span class="seperator"></span>
+                <img src="https://i.ibb.co/XsT6m9M/jklu.png" alt="" />
+            </div>
+            <h1>Verify your JKLU E-Mail address</h1>
+            <% if(warning !== '') { %>
+            <div class="warning"><%=warning%></div>
+            <% } %>
+            <form id="verify-form" method="POST" action="#">
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Name"
+                    id="name-inp"
+                    required="true"
+                />
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    id="email-inp"
+                    required="true"
+                />
+                <div class="role-selector-container">
+                    <label for="role"
+                        >For students only (CTRL + Click to select
+                        multiple)</label
+                    >
+                    <select name="role" id="role-selector" multiple>
+                        <option id="hr-role" value="hr">HR</option>
+                        <option id="dh-role" value="dh">Design Head</option>
+                        <option id="hw-role" value="hw">Hard Working</option>
+                        <option id="success-role" value="success">
+                            Successful
+                        </option>
+                        <option class="special-roles" id="hot-role" value="hot">
+                            Hot
+                        </option>
+                        <option
+                            class="special-roles"
+                            id="caring-role"
+                            value="caring"
+                        >
+                            Caring
+                        </option>
+                        <option
+                            class="special-roles"
+                            id="cute-role"
+                            value="cute"
+                        >
+                            Cute
+                        </option>
+                        <option
+                            class="special-roles"
+                            id="dashing"
+                            value="dashing"
+                        >
+                            Dashing
+                        </option>
+                    </select>
+                </div>
+                <input type="submit" value="Verify" />
+            </form>
+        </main>
+    </body>
+
+    <script>
+        if (document) {
+            document
+                .getElementById('verify-form')
+                .setAttribute('action', '<%-path%>')
+
+            let nameInput = document.getElementById('name-inp')
+            let emailInput = document.getElementById('email-inp')
+
+            let options = document.querySelectorAll('.special-roles')
+
+            emailInput.addEventListener('input', (e) => {
+                if (e.target.value !== 'adityakumawat@jklu.edu.in') {
+                    options.forEach((option) => {
+                        option.disabled = true
+                    })
+                }
+            })
+        }
+    </script>
+</html>

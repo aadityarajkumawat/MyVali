@@ -1,0 +1,3 @@
+# Vali
+
+A discord bot

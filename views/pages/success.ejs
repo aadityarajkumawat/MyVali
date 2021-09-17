@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+    <body>
+        <main class="role-success">
+            <div class="head-images">
+                <img src="https://i.ibb.co/9nd4fsw/discord.png" alt="" />
+                <span class="seperator"></span>
+                <img src="https://i.ibb.co/XsT6m9M/jklu.png" alt="" />
+            </div>
+            <div class="success">
+                <div class="image-container">
+                    <img src="https://i.ibb.co/h2fWbYq/checked.png" alt="" />
+                </div>
+                <div>
+                    <h1>You have successfully been assigned Student role</h1>
+                </div>
+            </div>
+        </main>
+
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+        <script>
+            var colors = ['#ffb029', '#ff1cce', '#9029ff']
+
+            function frame() {
+                let i = 0
+                let running = true
+                let n = Date.now()
+
+                function perform() {
+                    confetti({
+                        particleCount: 100,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: colors,
+                    })
+                    confetti({
+                        particleCount: 100,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: colors,
+                    })
+                }
+
+                for (let _ of Array(3)) {
+                    perform()
+                }
+            }
+
+            window.onload = frame()
+        </script>
+    </body>
+</html>
