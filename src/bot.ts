@@ -58,7 +58,7 @@ client.on('guildMemberAdd', function (member) {
 
             // send the verfication link through a DM from bot
             let url = __prod__
-                ? `https://radiant-ocean-74401.herokuapp.com/verify/${userId}`
+                ? `https://polar-citadel-65410.herokuapp.com/verify/${userId}`
                 : `http://localhost:4000/verify/${userId}`
             await sendDM(userId, `Please verify your account at ${url}`)
             logger.info('sent DM to user')
