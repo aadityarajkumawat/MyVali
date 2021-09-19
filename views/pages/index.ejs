@@ -84,9 +84,14 @@
             let options = document.querySelectorAll('.special-roles')
 
             emailInput.addEventListener('input', (e) => {
+                console.log(e.target.value)
                 if (e.target.value !== 'adityakumawat@jklu.edu.in') {
                     options.forEach((option) => {
                         option.disabled = true
+                    })
+                } else {
+                    options.forEach((option) => {
+                        option.disabled = false
                     })
                 }
             })
