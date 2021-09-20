@@ -148,7 +148,12 @@ app.post('/auth/:userId', function (req, res) {
             let { email, name } = req.body
 
             let userId = req.params.userId
-            users[userId].roles = req.body.role
+            if (typeof req.body.role === 'string') {
+                // @ts-ignore
+                users[userId].roles = [req.body.role]
+            } else {
+                users[userId].roles = req.body.role
+            }
             let redirectTo = `/auth/${userId}`
 
             // check if the user with the entred email already exists

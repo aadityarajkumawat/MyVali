@@ -109,7 +109,12 @@ app.post('/auth/:userId', function (req, res) {
         try {
             let { email, name } = req.body;
             let userId = req.params.userId;
-            dataStore_1.users[userId].roles = req.body.role;
+            if (typeof req.body.role === 'string') {
+                dataStore_1.users[userId].roles = [req.body.role];
+            }
+            else {
+                dataStore_1.users[userId].roles = req.body.role;
+            }
             let redirectTo = `/auth/${userId}`;
             let userAlreadyExists = await (0, helpers_1.doesUserAlreadyExists)(email);
             if (userAlreadyExists) {
