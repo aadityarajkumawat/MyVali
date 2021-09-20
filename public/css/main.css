@@ -249,3 +249,18 @@ form input[type='submit'] {
         height: 50px;
     }
 }
+
+.this-head {
+    margin-bottom: 0px;
+}
+
+.ins {
+    margin: 10px 0 10px 0;
+}
+
+.joining-link {
+    box-shadow: 2px 2px 4px 4px #eee;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 20px;
+}

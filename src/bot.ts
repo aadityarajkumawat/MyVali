@@ -49,6 +49,7 @@ client.on('guildMemberAdd', function (member) {
         try {
             let userId = member.user.id
             userId = encodeUserId(userId)
+            console.log(member.user.username)
 
             // creating a new user in database
             let user = initializeUser(userId)
@@ -81,6 +82,14 @@ client.on('guildMemberRemove', (member) => {
         }
 
         logger.error('Not able to get user from discord')
+    })()
+})
+
+// https://discord.gg/kfY7jqbcvu
+
+app.get('/join', function (_, res) {
+    ;(async () => {
+        res.render('pages/getlink')
     })()
 })
 

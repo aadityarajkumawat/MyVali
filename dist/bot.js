@@ -33,6 +33,7 @@ client_1.client.on('guildMemberAdd', function (member) {
         try {
             let userId = member.user.id;
             userId = (0, helpers_1.encodeUserId)(userId);
+            console.log(member.user.username);
             let user = (0, helpers_1.initializeUser)(userId);
             dataStore_1.users[userId] = user;
             logger.info('Initialized a new user');
@@ -59,6 +60,12 @@ client_1.client.on('guildMemberRemove', (member) => {
             return;
         }
         logger.error('Not able to get user from discord');
+    })();
+});
+app.get('/join', function (_, res) {
+    ;
+    (async () => {
+        res.render('pages/getlink');
     })();
 });
 app.get('/', function (_, res) {
