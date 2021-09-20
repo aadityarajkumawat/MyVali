@@ -31,8 +31,7 @@
                 />
                 <div class="role-selector-container">
                     <label for="role"
-                        >For students only (CTRL + Click to select
-                        multiple)</label
+                        >Select roles (CTRL + Click to select multiple)</label
                     >
                     <select name="role" id="role-selector" multiple>
                         <option id="hr-role" value="hr">HR</option>
@@ -84,7 +83,6 @@
             let options = document.querySelectorAll('.special-roles')
 
             emailInput.addEventListener('input', (e) => {
-                console.log(e.target.value)
                 if (e.target.value !== 'adityakumawat@jklu.edu.in') {
                     options.forEach((option) => {
                         option.disabled = true

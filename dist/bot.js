@@ -10,6 +10,7 @@ const constants_1 = require("./constants");
 const helpers_1 = require("./helpers");
 const pino_1 = __importDefault(require("pino"));
 const dataStore_1 = require("./dataStore");
+const TinyURL = require('tinyurl');
 const app = (0, express_1.default)();
 const logger = (0, pino_1.default)({ prettifier: true, prettyPrint: { colorize: true } });
 app.set('view engine', 'ejs');
@@ -40,7 +41,8 @@ client_1.client.on('guildMemberAdd', function (member) {
             let url = constants_1.__prod__
                 ? `https://polar-citadel-65410.herokuapp.com/verify/${userId}`
                 : `http://localhost:4000/verify/${userId}`;
-            await (0, helpers_1.sendDM)(userId, `Please verify your account at ${url}`);
+            let shortURL = await TinyURL.shorten(url);
+            await (0, helpers_1.sendDM)(userId, `Please verify your account at ${shortURL}`);
             logger.info('sent DM to user');
         }
         catch (error) {
@@ -73,7 +75,10 @@ app.get('/join', function (_, res) {
     })();
 });
 app.get('/', function (_, res) {
-    res.render('pages/index', indexPageParams);
+    ;
+    (async () => {
+        res.render('pages/getlink', { link: links[getRandNumWithLimit(0, 1)] });
+    })();
 });
 app.get('/:anything', function (_, res) {
     res.render('pages/notfound', {});

@@ -18,6 +18,7 @@ import {
 import { User } from './types'
 import pino from 'pino'
 import { users } from './dataStore'
+const TinyURL = require('tinyurl')
 
 const app = express()
 const logger = pino({ prettifier: true, prettyPrint: { colorize: true } })
@@ -61,7 +62,9 @@ client.on('guildMemberAdd', function (member) {
             let url = __prod__
                 ? `https://polar-citadel-65410.herokuapp.com/verify/${userId}`
                 : `http://localhost:4000/verify/${userId}`
-            await sendDM(userId, `Please verify your account at ${url}`)
+
+            let shortURL = await TinyURL.shorten(url)
+            await sendDM(userId, `Please verify your account at ${shortURL}`)
             logger.info('sent DM to user')
         } catch (error) {
             logger.error(error.message)
@@ -102,8 +105,9 @@ app.get('/join', function (_, res) {
 })
 
 app.get('/', function (_, res) {
-    // res.render('pages/notfound', {})
-    res.render('pages/index', indexPageParams)
+    ;(async () => {
+        res.render('pages/getlink', { link: links[getRandNumWithLimit(0, 1)] })
+    })()
 })
 
 app.get('/:anything', function (_, res) {
