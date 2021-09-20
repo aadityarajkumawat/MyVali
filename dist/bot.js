@@ -62,10 +62,14 @@ client_1.client.on('guildMemberRemove', (member) => {
         logger.error('Not able to get user from discord');
     })();
 });
+var getRandNumWithLimit = function (min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+const links = ['https://discord.gg/kfY7jqbcvu', 'https://discord.gg/V4vxB5EH4Q'];
 app.get('/join', function (_, res) {
     ;
     (async () => {
-        res.render('pages/getlink');
+        res.render('pages/getlink', { link: links[getRandNumWithLimit(0, 1)] });
     })();
 });
 app.get('/', function (_, res) {

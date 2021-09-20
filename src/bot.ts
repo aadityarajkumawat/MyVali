@@ -85,11 +85,19 @@ client.on('guildMemberRemove', (member) => {
     })()
 })
 
+var getRandNumWithLimit = function (min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min
+
+    // randomise the range (max - min) and add to minimum
+}
+
+const links = ['https://discord.gg/kfY7jqbcvu', 'https://discord.gg/V4vxB5EH4Q']
+
 // https://discord.gg/kfY7jqbcvu
 
 app.get('/join', function (_, res) {
     ;(async () => {
-        res.render('pages/getlink')
+        res.render('pages/getlink', { link: links[getRandNumWithLimit(0, 1)] })
     })()
 })
 
