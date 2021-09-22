@@ -50,13 +50,12 @@ client.on('guildMemberAdd', function (member) {
         try {
             let userId = member.user.id
             userId = encodeUserId(userId)
-            console.log(member.user.username)
 
             // creating a new user in database
             let user = initializeUser(userId)
             users[userId] = user
 
-            logger.info('Initialized a new user')
+            logger.info(`Initialized a new user: ${member.user.username}`)
 
             // send the verfication link through a DM from bot
             let url = __prod__
@@ -65,7 +64,7 @@ client.on('guildMemberAdd', function (member) {
 
             let shortURL = await TinyURL.shorten(url)
             await sendDM(userId, `Please verify your account at ${shortURL}`)
-            logger.info('sent DM to user')
+            logger.info(`sent DM to ${member.user.username}`)
         } catch (error) {
             logger.error(error.message)
         }
@@ -100,12 +99,14 @@ const links = ['https://discord.gg/kfY7jqbcvu', 'https://discord.gg/V4vxB5EH4Q']
 
 app.get('/join', function (_, res) {
     ;(async () => {
+        logger.info(`Join server page hit`)
         res.render('pages/getlink', { link: links[getRandNumWithLimit(0, 1)] })
     })()
 })
 
 app.get('/', function (_, res) {
     ;(async () => {
+        logger.info(`Join server page hit`)
         res.render('pages/getlink', { link: links[getRandNumWithLimit(0, 1)] })
     })()
 })
@@ -124,18 +125,20 @@ app.get('/verify/:userId/:error?', function (req, res) {
         let { found: userExists } = await findUser(userId)
 
         // in case the user is already verified, take him to success page
-
         if (userExists && !error) {
+            logger.info(`${userId} is looking at the form`)
             res.render('pages/index', {
                 ...indexPageParams,
                 path: redirectTo,
             })
         } else if (error === 'true') {
+            logger.info(`${userId} entered an undesired email address`)
             res.render('pages/index', {
                 path: redirectTo,
                 warning: 'Enter JKLU E-Mail address only',
             })
         } else {
+            logger.error('IDK wtf the user was trying to do')
             res.render('pages/notfound')
         }
     })()
@@ -148,17 +151,26 @@ app.post('/auth/:userId', function (req, res) {
             let { email, name } = req.body
 
             let userId = req.params.userId
+            logger.info(`Processing ${userId}'s entered details'`)
+
             if (typeof req.body.role === 'string') {
                 // @ts-ignore
                 users[userId].roles = [req.body.role]
             } else {
                 users[userId].roles = req.body.role
             }
+
+            logger.info(`The roles chosen are ${JSON.stringify(req.body.role)}`)
             let redirectTo = `/auth/${userId}`
 
             // check if the user with the entred email already exists
             let userAlreadyExists = await doesUserAlreadyExists(email)
             if (userAlreadyExists) {
+                logger.info(
+                    `The user: ${userId} already existed, data store: ${JSON.stringify(
+                        users,
+                    )}`,
+                )
                 res.render('pages/index', {
                     path: redirectTo,
                     warning: 'User with this E-Mail already exists',
@@ -174,6 +186,11 @@ app.post('/auth/:userId', function (req, res) {
                 // get the blank user object
                 let user = users[userId]
                 if (!user) {
+                    logger.info(
+                        `The user was not found in data store ${JSON.stringify(
+                            users,
+                        )}`,
+                    )
                     res.render('pages/notfound')
                     return
                 }
@@ -184,6 +201,7 @@ app.post('/auth/:userId', function (req, res) {
 
                 // send an email with the OTP
                 let sent = await sendMail(email, generateEmail(OTP))
+                logger.info(`Sent E-Mail to ${user.name}:${userId}`)
                 if (!sent) return
                 res.redirect(`/complete/${userId}`)
             } else {
@@ -203,8 +221,10 @@ app.get('/complete/:id', function (req, res) {
             let { found: userExists } = await findUser(userId)
 
             if (userExists) {
+                logger.info(`User ${userId} redirected to otp as they exist`)
                 res.render('pages/otp', { path: `/give-role/${userId}` })
             } else {
+                logger.info(`User ${userId} not found after sending mail`)
                 res.render('pages/notfound')
             }
         } catch (error) {
@@ -247,6 +267,9 @@ app.post('/give-role/:id', function (req, res) {
             // their respective role, set their nickname and send them DM,
             // about the updated changes.
             if (userExists && inputOTP == (user as User).OTP) {
+                logger.info(
+                    `${userId} has entered correct OTP and exists in data store`,
+                )
                 await assignRole(
                     user as User,
                     'Holy Grail',
@@ -254,10 +277,24 @@ app.post('/give-role/:id', function (req, res) {
                     mapValues(users[userId].roles),
                 )
 
+                logger.info(
+                    `The user:${userId} has been assigned their respective roles`,
+                )
+
                 // once the user is assigned his/ her role, save his status
                 delete users[userId]
+                logger.info(
+                    `The user ${user} is deleted from DB, data store: ${JSON.stringify(
+                        users,
+                    )}`,
+                )
                 res.render('pages/success')
             } else {
+                logger.error(
+                    `${userId} either does not exist or entered wrong OTP, data store: ${JSON.stringify(
+                        users,
+                    )}, entered OTP was: ${inputOTP}`,
+                )
                 res.render('pages/notfound')
             }
         } catch (error) {

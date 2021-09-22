@@ -34,16 +34,15 @@ client_1.client.on('guildMemberAdd', function (member) {
         try {
             let userId = member.user.id;
             userId = (0, helpers_1.encodeUserId)(userId);
-            console.log(member.user.username);
             let user = (0, helpers_1.initializeUser)(userId);
             dataStore_1.users[userId] = user;
-            logger.info('Initialized a new user');
+            logger.info(`Initialized a new user: ${member.user.username}`);
             let url = constants_1.__prod__
                 ? `https://polar-citadel-65410.herokuapp.com/verify/${userId}`
                 : `http://localhost:4000/verify/${userId}`;
             let shortURL = await TinyURL.shorten(url);
             await (0, helpers_1.sendDM)(userId, `Please verify your account at ${shortURL}`);
-            logger.info('sent DM to user');
+            logger.info(`sent DM to ${member.user.username}`);
         }
         catch (error) {
             logger.error(error.message);
@@ -71,12 +70,14 @@ const links = ['https://discord.gg/kfY7jqbcvu', 'https://discord.gg/V4vxB5EH4Q']
 app.get('/join', function (_, res) {
     ;
     (async () => {
+        logger.info(`Join server page hit`);
         res.render('pages/getlink', { link: links[getRandNumWithLimit(0, 1)] });
     })();
 });
 app.get('/', function (_, res) {
     ;
     (async () => {
+        logger.info(`Join server page hit`);
         res.render('pages/getlink', { link: links[getRandNumWithLimit(0, 1)] });
     })();
 });
@@ -90,15 +91,18 @@ app.get('/verify/:userId/:error?', function (req, res) {
         let redirectTo = `/auth/${userId}`;
         let { found: userExists } = await (0, helpers_1.findUser)(userId);
         if (userExists && !error) {
+            logger.info(`${userId} is looking at the form`);
             res.render('pages/index', Object.assign(Object.assign({}, indexPageParams), { path: redirectTo }));
         }
         else if (error === 'true') {
+            logger.info(`${userId} entered an undesired email address`);
             res.render('pages/index', {
                 path: redirectTo,
                 warning: 'Enter JKLU E-Mail address only',
             });
         }
         else {
+            logger.error('IDK wtf the user was trying to do');
             res.render('pages/notfound');
         }
     })();
@@ -109,15 +113,18 @@ app.post('/auth/:userId', function (req, res) {
         try {
             let { email, name } = req.body;
             let userId = req.params.userId;
+            logger.info(`Processing ${userId}'s entered details'`);
             if (typeof req.body.role === 'string') {
                 dataStore_1.users[userId].roles = [req.body.role];
             }
             else {
                 dataStore_1.users[userId].roles = req.body.role;
             }
+            logger.info(`The roles chosen are ${JSON.stringify(req.body.role)}`);
             let redirectTo = `/auth/${userId}`;
             let userAlreadyExists = await (0, helpers_1.doesUserAlreadyExists)(email);
             if (userAlreadyExists) {
+                logger.info(`The user: ${userId} already existed, data store: ${JSON.stringify(dataStore_1.users)}`);
                 res.render('pages/index', {
                     path: redirectTo,
                     warning: 'User with this E-Mail already exists',
@@ -129,12 +136,14 @@ app.post('/auth/:userId', function (req, res) {
             if (blankUserExists && (0, helpers_1.isJKLUEmail)(email) && name !== '') {
                 let user = dataStore_1.users[userId];
                 if (!user) {
+                    logger.info(`The user was not found in data store ${JSON.stringify(dataStore_1.users)}`);
                     res.render('pages/notfound');
                     return;
                 }
                 let newUser = Object.assign(Object.assign({}, user), { OTP, email, name });
                 dataStore_1.users[userId] = newUser;
                 let sent = await (0, helpers_1.sendMail)(email, (0, helpers_1.generateEmail)(OTP));
+                logger.info(`Sent E-Mail to ${user.name}:${userId}`);
                 if (!sent)
                     return;
                 res.redirect(`/complete/${userId}`);
@@ -155,9 +164,11 @@ app.get('/complete/:id', function (req, res) {
             let userId = req.params.id;
             let { found: userExists } = await (0, helpers_1.findUser)(userId);
             if (userExists) {
+                logger.info(`User ${userId} redirected to otp as they exist`);
                 res.render('pages/otp', { path: `/give-role/${userId}` });
             }
             else {
+                logger.info(`User ${userId} not found after sending mail`);
                 res.render('pages/notfound');
             }
         }
@@ -191,11 +202,15 @@ app.post('/give-role/:id', function (req, res) {
             let { found: userExists, user } = await (0, helpers_1.findUser)(userId);
             let inputOTP = (0, helpers_1.buildOTPString)(req.body);
             if (userExists && inputOTP == user.OTP) {
+                logger.info(`${userId} has entered correct OTP and exists in data store`);
                 await (0, helpers_1.assignRole)(user, 'Holy Grail', mapValues(dataStore_1.users[userId].roles));
+                logger.info(`The user:${userId} has been assigned their respective roles`);
                 delete dataStore_1.users[userId];
+                logger.info(`The user ${user} is deleted from DB, data store: ${JSON.stringify(dataStore_1.users)}`);
                 res.render('pages/success');
             }
             else {
+                logger.error(`${userId} either does not exist or entered wrong OTP, data store: ${JSON.stringify(dataStore_1.users)}, entered OTP was: ${inputOTP}`);
                 res.render('pages/notfound');
             }
         }
