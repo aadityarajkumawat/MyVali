@@ -17,6 +17,10 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
+.verify-heading {
+    text-align: center !important;
+}
+
 input[type='number'] {
     -moz-appearance: textfield;
 }

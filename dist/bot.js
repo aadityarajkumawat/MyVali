@@ -78,7 +78,7 @@ app.get('/', function (_, res) {
     ;
     (async () => {
         logger.info(`Join server page hit`);
-        res.render('pages/getlink', { link: links[getRandNumWithLimit(0, 1)] });
+        res.render('pages/index', indexPageParams);
     })();
 });
 app.get('/:anything', function (_, res) {

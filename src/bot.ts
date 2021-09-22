@@ -107,7 +107,8 @@ app.get('/join', function (_, res) {
 app.get('/', function (_, res) {
     ;(async () => {
         logger.info(`Join server page hit`)
-        res.render('pages/getlink', { link: links[getRandNumWithLimit(0, 1)] })
+        // res.render('pages/getlink', { link: links[getRandNumWithLimit(0, 1)] })
+        res.render('pages/index', indexPageParams)
     })()
 })
 
